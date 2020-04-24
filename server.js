@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
+const userRouter = require('./Routes/userRouter');
+const dataRouter = require('./Routes/dataRouter');
+
 const server = express();
 
 server.get('/', (req, res) => {
@@ -27,5 +30,7 @@ const restricted = (req, res, next) => {
 server.use(cors());
 server.use(helmet());
 server.use(express.json());
+server.use('/api/users', userRouter);
+server.use('/api/data', restricted, dataRouter)
 
 module.exports = server;
