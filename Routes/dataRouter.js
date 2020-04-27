@@ -1,6 +1,7 @@
-const dataRouter = require('express').Router()
+const express = require('express')
+const dataRouter = express.Router()
 
 
-dataRouter.get('/', (req, res) => {
+// dataRouter.get('/', (req, res) => {
     
-})
+// })
