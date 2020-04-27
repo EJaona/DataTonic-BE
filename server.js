@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const db = require('./data/db');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 // Local dependencies
 const userRoute = require('./Routes/userRouter');
@@ -11,33 +12,52 @@ const dataRouter = require('./Routes/dataRouter');
 
 const server = express();
 
+// Custom Middleware
+const restricted = (req, res, next) => {
+
+    const token = req.header.authorization
+
+    if (token){
+        jwt.verify(token, process.env.SECRET, ( err, decodeToken ) => {
+            if(err){
+
+                res
+                    .status(401)
+                    .json({message: 'There was an error verifying your account'})
+            }else {
+                req.decodeToken = decodeToken
+                next()
+            }
+        })
+    }else {
+        
+        res
+            .status(404)
+            .json({message: 'Looks like you are missing a token in your authorization header. Did you already lose the one we gave you?'})
+    }
+}
+
+
+// Base route test
+server.get('/', async (req, res) => {
+    
+    res
+        .status(418)
+        .json({
+            message: "looks like you're a little teapot...good luck with that",
+            postMessage: 'But yea, the api is working'
+        })
+
+    
+    
+});
+
 // Middleware 
 server.use(cors());
 server.use(helmet());
 server.use(express.json());
 server.use('/api/users', userRoute)
-// server.use('/api/data', dataRouter)
-// Custom Middleware
-
-
-
-// Request handlers
-server.get('/', async (req, res) => {
-    console.log(req.url)
-    try{
-
-        const data = await db('company_data')
-        res
-            .status(200)
-            .json({data})
-
-    }catch(err){
-        console.log(err.message)
-    }
-
-    
-    
-});
+server.use('/api/data', restricted, dataRouter)
 
 
 
