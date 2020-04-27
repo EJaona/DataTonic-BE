@@ -15,7 +15,7 @@ const server = express();
 // Custom Middleware
 const restricted = (req, res, next) => {
 
-    const token = req.headers.Authorization;
+    const token = req.headers.authorization;
 
     if (token){
 
