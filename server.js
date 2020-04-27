@@ -15,9 +15,10 @@ const server = express();
 // Custom Middleware
 const restricted = (req, res, next) => {
 
-    const token = req.header.authorization
+    const token = req.headers.Authorization;
 
     if (token){
+
         jwt.verify(token, process.env.SECRET, ( err, decodeToken ) => {
             if(err){
 
@@ -30,6 +31,8 @@ const restricted = (req, res, next) => {
             }
         })
     }else {
+
+        console.log('no token')
         
         res
             .status(404)
@@ -38,10 +41,10 @@ const restricted = (req, res, next) => {
 }
 
 server.use( (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-  });
+});
 
 
 // Base route test
